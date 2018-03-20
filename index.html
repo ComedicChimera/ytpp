@@ -12,7 +12,12 @@
 
       $(document).ready(() => {
         $('#download').mousedown(() => {
-          api.testRemote();
+          try {
+            api.download($('#query').val(), $('#filepath').val(), $('#format').val());
+          }
+          catch (e) {
+            $('#status').val('Error: ' + e);
+          }
         });
       })
     </script>
@@ -34,6 +39,7 @@
           <option>avi</option>
           <option>3gp</option>
           <option>webm</option>
+          <option>mov</option>
         </optgroup>
         <optgroup label='Audio'>
           <option>mp3</option>
@@ -42,7 +48,8 @@
           <option>ogg</option>
         </optgroup>
       </select>
-      <button id='filepath'>Select Download Path</button>
+      <input id='filepath' type='text'/>
+      <button id='selectfile'>Select</button>
     </div>
     <div class='formbox'>
       <button id='stream'>Stream Audio</button>
