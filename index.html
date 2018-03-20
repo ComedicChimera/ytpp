@@ -5,7 +5,7 @@
     <meta charset='utf-8'/>
     <title>yt++</title>
     <script>
-      const remote = require('electron').remote;
+      const {remote, ipcRenderer} = require('electron');
       const api = remote.require('./api.js');
 
       window.$ = window.jQuery = require('jquery');
@@ -19,7 +19,15 @@
             $('#status').val('Error: ' + e);
           }
         });
-      })
+      });
+
+      function setStatus(message, progress) {
+        
+      }
+
+      ipcRenderer.on('set-status', (event, args) => {
+        setStatus(args.message, args.progress);
+      });
     </script>
   </head>
   <body>
