@@ -1,0 +1,65 @@
+<!doctype html>
+
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'/>
+    <title>yt++</title>
+    <script>
+      const remote = require('electron').remote;
+      const api = remote.require('./api.js');
+
+      window.$ = window.jQuery = require('jquery');
+
+      $(document).ready(() => {
+        $('#download').mousedown(() => {
+          api.testRemote();
+        });
+      })
+    </script>
+  </head>
+  <body>
+    <div id='searchbar'>
+      <input id='query' type='text'/>
+      <button id='search'>Search</button>
+      <div id='search-results'>
+
+      </div>
+    </div>
+    <div class='formbox'>
+      <button id='download'>Download As</button>
+      <select id='format'>
+        <optgroup label='Video'>
+          <option>mp4</option>
+          <option>flv</option>
+          <option>avi</option>
+          <option>3gp</option>
+          <option>webm</option>
+        </optgroup>
+        <optgroup label='Audio'>
+          <option>mp3</option>
+          <option>m4a</option>
+          <option>wav</option>
+          <option>ogg</option>
+        </optgroup>
+      </select>
+      <button id='filepath'>Select Download Path</button>
+    </div>
+    <div class='formbox'>
+      <button id='stream'>Stream Audio</button>
+      <button id='setpause'>Pause</button>
+      <button id='stopstream'>Stop</button>
+      <label for='#volume'>Volume</label>
+      <input id='volume' type='range' min='0' max='100' value='50'/>
+      <label for='#device'>Device</label>
+      <select id='device'>
+        <!-- populate at run time-->
+      </select>
+    </div>
+    <div id='status-box'>
+      <span id='status'></span>
+      <div id='progress-bar'>
+
+      </div>
+    </div>
+  </body>
+</html>
