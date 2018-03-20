@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "electron": "^1.8.4",
-    "jquery": "^3.3.1"
+    "jquery": "^3.3.1",
+    "stream-transcoder": "0.0.5"
   }
 }
