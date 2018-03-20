@@ -1,6 +1,6 @@
 const ytdl = require('ytdl-core');
 const {win} = require('../main.js');
-const ytSearch = require('youtube-search');
+const https = require('https');
 const fs = require('fs');
 const transcoder = require('stream-transcoder');
 
@@ -20,8 +20,7 @@ module.exports.download = (query, path, format) => {
   }
   else {
     getUrl(query).then(result => {
-        stream = getStream(query);
-        console.log(stream);
+        stream = getStream(result);
         downloadStream(stream, format, path);
       },
       err => {
@@ -58,10 +57,14 @@ function getStream(url, format) {
 
 async function getUrl(query) {
   return new Promise((resolve, reject) => {
-    // fix yt searhc (get key or implement new method)
-    ytSearch(query, {maxResults: 1, key: "--"}, (err, results) => {
-      if (err) reject(err);
-      else resolve(results[0]);
+    https.get('https://www.youtube.com/results?search_query=' + encodeURIComponent(query), res => {
+      if (res.statusCode !== 200)
+        reject(res.statusCode);
+      let data = '';
+      res.on('data', chunk => { data += chunk; });
+      res.on('end', () => {
+        resolve('https://www.youtube.com/watch?v=' + data.match(/href=\"\/watch[^\"]+/g)[0].slice(15));
+      });
     });
   });
 }
