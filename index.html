@@ -16,13 +16,13 @@
             api.download($('#query').val(), $('#filepath').val(), $('#format').val());
           }
           catch (e) {
-            $('#status').val('Error: ' + e);
+            $('#status').html('Error: ' + e);
           }
         });
       });
 
       function setStatus(message, progress) {
-        
+
       }
 
       ipcRenderer.on('set-status', (event, args) => {

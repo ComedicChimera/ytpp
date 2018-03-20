@@ -1,5 +1,5 @@
 // includes
-const downloader = require('./yt_src/downloader.js');
+const downloader = require('./modules/downloader.js');
 
 // download file
 module.exports.download = (query, path, format) => {
