@@ -1,6 +1,7 @@
 // includes
 const downloader = require('./modules/downloader.js');
-const streamer = require('./modules/streamer.js');
+// const streamer = require('./modules/streamer.js');
+const portAudio = require('naudiodon');
 
 // download file
 module.exports.download = (query, path, format) => {
@@ -13,6 +14,12 @@ module.exports.download = (query, path, format) => {
 }
 
 // get a list of devices
-module.exports.getDevices = () => {
-  return streamer.devices;
+module.exports.getDeviceList = () => {
+  let deviceNames = {};
+  for(var x of portAudio.getDevices()) {
+    if (x.maxOutputChannels > 0) {
+      deviceNames[x] = x.id;
+    }
+  }
+  return deviceNames;
 }
