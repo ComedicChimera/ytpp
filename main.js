@@ -3,6 +3,9 @@ const {app, BrowserWindow} = require('electron');
 const url = require('url');
 const path = require('path');
 
+// configure ffmpeg
+process.env.FFMPEG_BIN_PATH = path.join(__dirname, 'ffmpeg.exe');
+
 // window variable
 let win;
 
@@ -44,3 +47,11 @@ app.on('activate', () => {
   if (win === null)
     createWindow();
 });
+
+// sets the remote page status (status message and progress bar)
+module.exports.setRemoteStatus = (message, progress) => {
+  win.webContents.send('set-status', {
+    message: message,
+    progress: progress
+  });
+}

@@ -5,11 +5,15 @@
     <meta charset='utf-8'/>
     <title>yt++</title>
     <script>
+      // get remote and ipcRenderer (interprocess communication)
       const {remote, ipcRenderer} = require('electron');
+      // get internal api
       const api = remote.require('./api.js');
 
+      // setup jquery
       window.$ = window.jQuery = require('jquery');
 
+      // apply event handlers on document ready
       $(document).ready(() => {
         $('#download').mousedown(() => {
           try {
@@ -21,10 +25,14 @@
         });
       });
 
+      // set progress bar and status message
       function setStatus(message, progress) {
-
+        // set status variable
+        $('#status').html(message);
+        // TODO update progress bar
       }
 
+      // allow main process to set the remote status
       ipcRenderer.on('set-status', (event, args) => {
         setStatus(args.message, args.progress);
       });
@@ -68,6 +76,14 @@
       <label for='#device'>Device</label>
       <select id='device'>
         <!-- populate at run time-->
+        <script>
+          let deviceList = Object.keys(api.getDevices());
+          let optionsHtml = '';
+          for(var x of deviceList) {
+            optionsHtml += `<option>${x}</option>`;
+          }
+          $('#device').html(optionsHtml);
+        </script>
       </select>
     </div>
     <div id='status-box'>

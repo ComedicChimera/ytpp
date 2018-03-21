@@ -4,14 +4,21 @@
   "description": "A Youtube video downloader and streamer.",
   "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron .",
+    "postinstall": "electron-builder install-app-deps"
   },
   "author": "ComedicChimera",
   "license": "ISC",
   "dependencies": {
     "electron": "^1.8.4",
     "jquery": "^3.3.1",
+    "node-core-audio": "^0.5.1",
     "stream-transcoder": "0.0.5",
+    "youtube-dl": "^1.11.1",
     "youtube-search": "^1.0.10"
+  },
+  "devDependencies": {
+    "electron-builder": "^20.5.1",
+    "electron-rebuild": "^1.7.3"
   }
 }
