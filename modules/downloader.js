@@ -31,6 +31,32 @@ module.exports.download = (query, path, format) => {
   }
 }
 
+// get a transcoded download stream from the query
+module.exports.getStreamFromQuery = async query => {
+  return new Promise((resolve, reject) => {
+    // apply url rules
+    // return stream
+    if (query.indexOf('://www.youtube.com/watch?v=') !== -1) {
+      stream = getStream(query, 'wav');
+      resolve(new transcoder(stream)
+        .format('wav')
+        .sampleRate(44100)
+	      .channels(2)
+        .stream());
+    }
+    else {
+      getUrl(query).then(result => {
+        stream = getStream(result, 'wav');
+        resolve(new transcoder(stream)
+          .format('wav')
+          .sampleRate(44100)
+  	      .channels(2)
+          .stream());
+      }, err => { reject(err); })
+    }
+  });
+}
+
 // all unavailable formats for youtube with their downloadable equivalents (for transcoding)
 let formatRemaps = {
   'mp3': 'm4a',

@@ -1,19 +1,12 @@
-const nodeAudio = require('node-core-audio');
+const portAudio = require('naudiodon');
 
-let audioEngine = nodeAudio.createNewAudioEngine();
-
-// devices (name, id)
-let devices = {
-
-}
-
-(function() {
-  let deviceCount = engine.getNumDevices();
-  for(var i = 0; i < deviceCount; i++) {
-    devices[engine.getDeviceName(i)] = i;
-  }
-});
-
-module.exports = {
-  devices: devices
+module.exports.playStream = (stream, volume, device) => {
+  let ao = new portAudio.AudioOutput({
+    channelCount: 2,
+    sampleFormat: portAudio.SampleFormat16Bit,
+    sampleRate: 44100
+  });
+  stream.on('end', ao.end);
+  stream.pipe(ao);
+  ao.start();
 }

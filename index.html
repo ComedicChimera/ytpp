@@ -23,6 +23,15 @@
             $('#status').html('Error: ' + e);
           }
         });
+        $('#stream').mousedown(() => {
+          let deviceId = api.getDevices()[$('#device').val()];
+          try {
+            api.playStream($('#query').val(), Number($('#volume').val()), deviceId);
+          }
+          catch (e) {
+            $('#status').html('Error: ' + e);
+          }
+        });
       });
 
       // set progress bar and status message
