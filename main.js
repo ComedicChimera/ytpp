@@ -5,6 +5,7 @@ const path = require('path');
 
 // configure ffmpeg
 process.env.FFMPEG_BIN_PATH = path.join(__dirname, 'ffmpeg.exe');
+process.env.FFPLAY_BIN_PATH = path.join(__dirname, 'ffplay.exe');
 
 // window variable
 let win;

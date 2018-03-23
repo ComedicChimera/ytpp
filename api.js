@@ -34,3 +34,9 @@ module.exports.playStream = (query, volume, device) => {
     throw err;
   });
 }
+
+// set pause state
+module.exports.setPause = streamer.setPause;
+
+// stop audio
+module.exports.stop = streamer.stop;

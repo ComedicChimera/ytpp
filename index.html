@@ -15,23 +15,54 @@
 
       // apply event handlers on document ready
       $(document).ready(() => {
+        // configure download handler
         $('#download').mousedown(() => {
           try {
+            // try and fail if anything goes wrong
+            // val1 = query, val2 = filepath, val3 = format
             api.download($('#query').val(), $('#filepath').val(), $('#format').val());
           }
           catch (e) {
+            // echo to status
             $('#status').html('Error: ' + e);
           }
         });
+
+        // configure audio stream handler
         $('#stream').mousedown(() => {
+          // get device id to stream to
           let deviceId = api.getDevices()[$('#device').val()];
           try {
-            api.playStream($('#query').val(), Number($('#volume').val()), deviceId);
+            // play stream
+            // query, volume (as string), device id
+            api.playStream($('#query').val(), $('#volume').val(), deviceId);
           }
           catch (e) {
+            // echo to status
             $('#status').html('Error: ' + e);
           }
         });
+
+        // configure pause button
+        $('#setpause').mousedown(() => {
+          // set pause internal api call
+          // no known points of fatal failure so no need for try catch
+          api.setPause();
+
+          // update text
+          $('setpause').val($('setpause').val() == 'Pause' ? 'Resume' : 'Pause');
+
+          // update status
+          setStatus($('setpause').val() + 'd Audio.');
+        });
+
+        $('#stopstream').mousedown(() => {
+          // stop audio
+          api.stop();
+
+          // update status
+          setStatus('Stopped Audio.', 0);
+        })
       });
 
       // set progress bar and status message
