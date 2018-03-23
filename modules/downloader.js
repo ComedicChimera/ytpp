@@ -1,7 +1,7 @@
 const {setRemoteStatus} = require('../main.js');
 const https = require('https');
 const fs = require('fs');
-const transcoder = require('stream-transcoder');
+const {transcode} = require('./ffmpeg-util.js');
 const ytdl = require('youtube-dl');
 
 
@@ -38,20 +38,12 @@ module.exports.getStreamFromQuery = async query => {
     // return stream
     if (query.indexOf('://www.youtube.com/watch?v=') !== -1) {
       stream = getStream(query, 'wav');
-      resolve(new transcoder(stream)
-        .format('wav')
-        .sampleRate(44100)
-	      .channels(2)
-        .stream());
+      resolve(transcode(stream, 'wav'));
     }
     else {
       getUrl(query).then(result => {
         stream = getStream(result, 'wav');
-        resolve(new transcoder(stream)
-          .format('wav')
-          .sampleRate(44100)
-  	      .channels(2)
-          .stream());
+        resolve(transcode(stream, 'wav'));
       }, err => { reject(err); })
     }
   });
@@ -70,19 +62,18 @@ function downloadStream(stream, format, filename) {
   // check if transcoding is necessary
   if (Object.keys(formatRemaps).includes(format)) {
     setRemoteStatus('Transcoding...', 75);
-    // transcode stream
-    new transcoder(stream)
-      .format(format)
-      .stream()
-      // pipe to file
-      .pipe(fs.createWriteStream(filename));
+    // transcode stream and pipe to file
+    let r = transcode(stream, format).pipe(fs.createWriteStream(filename));
 
-    setRemoteStatus('Download Complete!', 100);
+    // when file finishes, alert user
+    r.on('close', () => setRemoteStatus('Download Complete!', 100) );
   }
   else {
     // pipe to file
-    stream.pipe(fs.createWriteStream(filename));
-    setRemoteStatus('Download Complete!', 100);
+    let r = stream.pipe(fs.createWriteStream(filename));
+
+    // when file finishes, alert user
+    r.on('close', () => setRemoteStatus('Download Complete!', 100) );
   }
 }
 
@@ -113,5 +104,39 @@ async function getUrl(query) {
         resolve('https://www.youtube.com/watch?v=' + data.match(/href=\"\/watch[^\"]+/g)[0].slice(15));
       });
     });
+  });
+}
+
+// get video info
+module.exports.getVideoInfo = async (query) => {
+  // return usable promise
+  return new Promise((resolve, reject) => {
+    // it is it is a url, don't call getUrl
+    if (query.indexOf('://www.youtube.com/watch?v=') !== -1) {
+      let data = ytdl.getInfo(query, (err, info) => {
+        if (err) reject(err);
+        else resolve({
+          title: info.title,
+          thumbnail: info.thumbnail,
+          url: query
+        });
+      });
+    }
+    else {
+      // else getUrl and return response
+      getUrl(query).then(url => {
+        let data = ytdl.getInfo(url, (err, info) => {
+          if (err) reject(err);
+          else resolve({
+            title: info.title,
+            thumbnail: info.thumbnail,
+            url: url
+          });
+        });
+      },
+      err => {
+        reject(err);
+      });
+    }
   });
 }

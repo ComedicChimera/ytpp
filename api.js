@@ -40,3 +40,6 @@ module.exports.setPause = streamer.setPause;
 
 // stop audio
 module.exports.stop = streamer.stop;
+
+// get youtube info
+module.exports.getInfo = downloader.getVideoInfo;

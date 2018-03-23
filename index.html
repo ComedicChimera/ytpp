@@ -5,7 +5,7 @@
     <meta charset='utf-8'/>
     <title>yt++</title>
     <script>
-      // get remote and ipcRenderer (interprocess communication)
+      // get remote and ipcRenderer (interprocess communication), dialog (for saving)
       const {remote, ipcRenderer} = require('electron');
       // get internal api
       const api = remote.require('./api.js');
@@ -20,7 +20,7 @@
           try {
             // try and fail if anything goes wrong
             // val1 = query, val2 = filepath, val3 = format
-            api.download($('#query').val(), $('#filepath').val(), $('#format').val());
+            api.download($('#query').val(), $('#file-path').val(), $('#format').val());
           }
           catch (e) {
             // echo to status
@@ -62,7 +62,32 @@
 
           // update status
           setStatus('Stopped Audio.', 0);
-        })
+        });
+
+        // allow searching
+        $('#search').mousedown(() => {
+          // get info and eval promise
+          api.getInfo($('#query').val()).then(data => {
+            let htmlifiedResponse = `<img height=\'54px\' width=\'96px\'src=\'${data.thumbnail}\'/>
+            \n<span class=\'title\'>${data.title}</span>
+            \n<br /><span class=\'video-url\'>${data.url}</span>`;
+
+            // add into search results
+            $('#search-results').html(htmlifiedResponse);
+          },
+          err => {
+            // update status if failed to get info
+            setStatus('Error: ' + err, 0);
+          });
+        });
+
+        // select download location
+        $('#select-file').mousedown(() => {
+          // open dialog
+          let filename = remote.dialog.showSaveDialog();
+          // set result into the file-name field
+          $('#file-path').val(filename);
+        });
       });
 
       // set progress bar and status message
@@ -104,8 +129,8 @@
           <option>ogg</option>
         </optgroup>
       </select>
-      <input id='filepath' type='text'/>
-      <button id='selectfile'>Select</button>
+      <input id='file-path' type='text'/>
+      <button id='select-file'>Select</button>
     </div>
     <div class='formbox'>
       <button id='stream'>Stream Audio</button>
