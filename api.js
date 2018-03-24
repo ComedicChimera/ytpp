@@ -1,7 +1,5 @@
 // includes
 const downloader = require('./modules/downloader.js');
-const streamer = require('./modules/streamer.js');
-const portAudio = require('naudiodon');
 
 // download file
 module.exports.download = (query, path, format) => {
@@ -13,33 +11,18 @@ module.exports.download = (query, path, format) => {
   downloader.download(query, path, format);
 }
 
-// get a list of devices
-module.exports.getDevices = () => {
-  let deviceNames = {};
-  for(var x of portAudio.getDevices()) {
-    if (x.maxOutputChannels == 2) {
-      deviceNames[x.name] = x.id;
-    }
-  }
-  return deviceNames;
-}
-
 // play stream
-module.exports.playStream = (query, volume, device) => {
-  if (query == '')
-    throw 'Please provide a search query.';
-  downloader.getStreamFromQuery(query).then(stream => {
-    streamer.playStream(stream, volume, device);
-  }, err => {
-    throw err;
+module.exports.getStreamUrl = (query) => {
+  return new Promise(async (resolve, reject) => {
+    if (query == '')
+      throw 'Please provide a search query.';
+    downloader.getURLFromQuery(query).then(url => {
+      resolve(url);
+    }, err => {
+      reject(err);
+    });
   });
 }
-
-// set pause state
-module.exports.setPause = streamer.setPause;
-
-// stop audio
-module.exports.stop = streamer.stop;
 
 // get youtube info
 module.exports.getInfo = downloader.getVideoInfo;

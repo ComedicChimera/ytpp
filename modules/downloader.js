@@ -32,18 +32,22 @@ module.exports.download = (query, path, format) => {
 }
 
 // get a transcoded download stream from the query
-module.exports.getStreamFromQuery = async query => {
+module.exports.getURLFromQuery = async query => {
   return new Promise((resolve, reject) => {
     // apply url rules
     // return stream
     if (query.indexOf('://www.youtube.com/watch?v=') !== -1) {
-      stream = getStream(query, 'wav');
-      resolve(transcode(stream, 'wav'));
+      ytdl.getInfo(query, ['-f', 'ogg'], (err, info) => {
+        if (err) reject(err);
+        resolve(info.url);
+      });
     }
     else {
       getUrl(query).then(result => {
-        stream = getStream(result, 'wav');
-        resolve(transcode(stream, 'wav'));
+        ytdl.getInfo(result, ['-f', 'm4a'], (err, info) => {
+          if (err) reject(err);
+          resolve(info.url);
+        });
       }, err => { reject(err); })
     }
   });

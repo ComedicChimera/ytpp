@@ -12,7 +12,7 @@
   "dependencies": {
     "electron": "^1.8.4",
     "jquery": "^3.3.1",
-    "naudiodon": "^0.4.6",
+    "jquery-ui": "^1.12.1",
     "youtube-dl": "^1.11.1"
   },
   "devDependencies": {

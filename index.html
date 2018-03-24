@@ -4,6 +4,7 @@
   <head>
     <meta charset='utf-8'/>
     <title>yt++</title>
+    <script src='modules/streamer.js'></script>
     <script>
       // get remote and ipcRenderer (interprocess communication), dialog (for saving)
       const {remote, ipcRenderer} = require('electron');
@@ -31,34 +32,46 @@
         // configure audio stream handler
         $('#stream').mousedown(() => {
           // get device id to stream to
-          let deviceId = api.getDevices()[$('#device').val()];
-          try {
-            // play stream
-            // query, volume (as string), device id
-            api.playStream($('#query').val(), $('#volume').val(), deviceId);
-          }
-          catch (e) {
-            // echo to status
-            $('#status').html('Error: ' + e);
-          }
+          getDevices().then(devices => {
+            let deviceId = devices[$('#device').val()];
+            try {
+              // play stream
+              // query, volume (as string), device id
+              api.getStreamUrl($('#query').val()).then(sUrl => {
+                  playStream(sUrl, $('#volume').val(), deviceId);
+              },
+              err => {
+                setStatus('Error: ' + err, 0);
+              })
+
+            }
+            catch (e) {
+              // echo to status
+              $('#status').html('Error: ' + e, 0);
+            }
+          },
+          err => {
+            $('#status').html('Error: ' + err, 0);
+          });
+
         });
 
         // configure pause button
-        $('#setpause').mousedown(() => {
+        $('#set-pause').mousedown(() => {
           // set pause internal api call
           // no known points of fatal failure so no need for try catch
-          api.setPause();
+          setStreamPause();
 
           // update text
-          $('setpause').val($('setpause').val() == 'Pause' ? 'Resume' : 'Pause');
+          $('#set-pause').html($('#set-pause').html() == 'Pause' ? 'Resume' : 'Pause');
 
           // update status
-          setStatus($('setpause').val() + 'd Audio.');
+          setStatus($('#set-pause').html() + 'd Audio.');
         });
 
-        $('#stopstream').mousedown(() => {
+        $('#stop-stream').mousedown(() => {
           // stop audio
-          api.stop();
+          stopStream();
 
           // update status
           setStatus('Stopped Audio.', 0);
@@ -134,28 +147,32 @@
     </div>
     <div class='formbox'>
       <button id='stream'>Stream Audio</button>
-      <button id='setpause'>Pause</button>
-      <button id='stopstream'>Stop</button>
+      <button id='set-pause'>Pause</button>
+      <button id='stop-stream'>Stop</button>
       <label for='#volume'>Volume</label>
-      <input id='volume' type='range' min='0' max='100' value='50'/>
+      <input id='volume' type='range' min='0' max='100' value='50' onchange="updateVolume(Number($('#volume').val()));"/>
       <label for='#device'>Device</label>
       <select id='device'>
         <!-- populate at run time-->
         <script>
-          let deviceList = Object.keys(api.getDevices());
-          let optionsHtml = '';
-          for(var x of deviceList) {
-            optionsHtml += `<option>${x}</option>`;
-          }
-          $('#device').html(optionsHtml);
+          getDevices().then((devices) => {
+            let deviceList = Object.keys(devices);
+            let optionsHtml = '';
+            for(var x of deviceList) {
+              optionsHtml += `<option>${x}</option>`;
+            }
+            $('#device').html(optionsHtml);
+          },
+          err => {
+            throw err;
+          })
         </script>
       </select>
     </div>
     <div id='status-box'>
       <span id='status'></span>
-      <div id='progress-bar'>
-
-      </div>
     </div>
+    <ul class='queue'>
+    </ul>
   </body>
 </html>

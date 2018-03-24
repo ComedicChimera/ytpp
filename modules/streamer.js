@@ -1,66 +1,55 @@
-const spawn = require('child_process').spawn;
-const os = require('os');
+// audio player
+let audio;
 
-// ffplay process
-let child;
-
-// whether or not it is paused
-let paused = true;
+// position in stream
+let time;
 
 
-module.exports.playStream = (stream, volume, device) => {
-  // stop now playing
-  if (child != null) {
-    child.write('q');
-    paused = false;
+// play audio stream
+function playStream(url, volume, device) {
+  audio = new Audio(url);
+  audio.volume = volume / 100;
+  audio.setSinkId(device);
+  audio.play();
+}
+
+
+// returns a promise of a dict of devices
+// { name: id }
+async function getDevices() {
+  return new Promise(async (resolve, reject) => {
+    let devices = await navigator.mediaDevices.enumerateDevices();
+    let audioDevices = devices.filter(device => device.kind === 'audiooutput');
+    let deviceDict = {};
+    for(var device of devices) {
+      deviceDict[device.label] = device.deviceId;
+    }
+    resolve(deviceDict);
+  });
+}
+
+// stop the audio
+function stopStream() {
+  if (audio) {
+    audio.pause();
+    audio = null;
   }
-
-  // basic arguments
-  let arguments = ['-i', '-', '-nodisp', '-volume', String(volume)];
-
-  // spawn subprocess
-  child = spawn(process.env.FFPLAY_BIN_PATH, arguments, {
-    cwd: os.tmpdir()
-  });
-
-  // when process is done, cleanup
-  child.on('exit', (err) => {
-    child = null;
-    paused = false;
-    if (err) throw err;
-  });
-
-  // unpipe if streaming fails
-  child.stdin.on('error', (err) => {
-    stream.unpipe(child.stdin);
-  });
-
-  // pipe stream to ffplay
-  stream.pipe(child.stdin);
 }
 
-
-// update pause state
-module.exports.setPause = () => {
-  // if no player currently running, silently fail
-  if (child == null)
-    return;
-
-  // pause / unpause
-  child.kill(paused ? 'SIGCONT' : 'SIGSTOP');
-  paused = !paused;
+// invert pause
+function setStreamPause() {
+  if (audio.paused) {
+    audio.currentTime = time;
+    audio.play();
+  }
+  else {
+    time = audio.currentTime;
+    audio.pause();
+  }
 }
 
-// stop playing
-module.exports.stop = () => {
-  // if no player, silently fail
-  if (child == null)
-    return;
-
-  // kill child process
-  // child will cleanup on its own
-  child.kill();
-
-  // reset pause state
-  pause = false;
+// update volume
+function updateVolume(newVol) {
+  if (audio)
+    audio.volume = newVol / 100;
 }
