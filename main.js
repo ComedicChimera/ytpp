@@ -3,11 +3,6 @@ const {app, BrowserWindow} = require('electron');
 const url = require('url');
 const path = require('path');
 
-// configure ffmpeg and send-key
-process.env.FFMPEG_BIN_PATH = path.join(__dirname, 'ffmpeg.exe');
-process.env.FFPLAY_BIN_PATH = path.join(__dirname, 'ffplay.exe');
-process.env.SEND_KEY_BIN_PATH = path.join(__dirname, 'modules/ffplay-ipc/send-key.exe');
-
 // window variable
 let win;
 
@@ -20,7 +15,7 @@ function createWindow() {
 
   // load index.html
   win.loadURL(url.format({
-    pathname: path.join(__dirname, 'index.html'),
+    pathname: path.join(__dirname, 'window/index.html'),
     protocol: 'file:',
     slashes: true
   }));

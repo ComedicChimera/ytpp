@@ -1,0 +1,91 @@
+<!doctype html>
+
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'/>
+    <title>yt++</title>
+    <script src='../scripts/streamer.js'></script>
+    <script src='script.js'></script>
+  </head>
+  <body>
+    <div class='search-bar'>
+      <input id='query' type='text'/>
+      <button id='search'>Search</button>
+      <div id='search-results'>
+
+      </div>
+    </div>
+    <div class='options-panel'>
+      <div class='formbox'>
+        <!-- logo -->
+        <div id='status-box'>
+          <span id='status'></span>
+          <!--working indicator-->
+        </div>
+      </div>
+      <div class='formbox'>
+        <button id='download'>Download As</button>
+        <select id='format'>
+          <optgroup label='Video'>
+            <option>mp4</option>
+            <option>flv</option>
+            <option>avi</option>
+            <option>3gp</option>
+            <option>webm</option>
+            <option>mov</option>
+          </optgroup>
+          <optgroup label='Audio'>
+            <option>mp3</option>
+            <option>m4a</option>
+            <option>wav</option>
+            <option>ogg</option>
+          </optgroup>
+        </select>
+        <input id='file-path' type='text'/>
+        <button id='select-file'>Select</button>
+      </div>
+      <div class='formbox'>
+        <button id='stream'>Stream Audio</button>
+        <div id='volume-box'>
+          <input id='volume' type='range' min='0' max='100' value='50' onchange="updateAllVolume(Number($('#volume').val()));"/>
+          <img id='volume-icon' src='../images/volume-medium.png' height='50px' width='50px'/>
+        </div>
+        <label for='#device'>Device</label>
+        <select id='device'>
+          <!-- populate at run time-->
+          <script>
+            getDevices().then((devices) => {
+              let deviceList = Object.keys(devices);
+              let optionsHtml = '';
+              for(var x of deviceList) {
+                optionsHtml += `<option>${x}</option>`;
+              }
+              $('#device').html(optionsHtml);
+            },
+            err => {
+              throw err;
+            })
+          </script>
+        </select>
+      </div>
+      <div class='formbox'>
+        <button id='add-elem-to-queue'>Add to Queue</button>
+        <button id='shuffle-queue'>Shuffle</button>
+        <label class='switch'>
+          <label for='#loop-queue'>Loop</label>
+          <input id='loop-queue' type="checkbox"/>
+          <span class="slider-round"></span>
+        </label>
+        <button id='clear-queue'>Empty Queue</button>
+      </div>
+    </div>
+    <div class='queue-container'>
+      <ul class='queue'>
+      </ul>
+    </div>
+    <div class='song-controller'>
+      <button id='set-pause'>Pause</button>
+      <button id='stop-stream'>Stop</button>
+    </div>
+  </body>
+</html>
