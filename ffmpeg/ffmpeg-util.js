@@ -1,6 +1,7 @@
 // spawn instance of ffmpeg
 const spawn = require('child_process').spawn;
 const os = require('os');
+const path = require('path');
 
 // ffmpeg binary path
 const FFMPEG_BIN_PATH = path.join(__dirname, 'ffmpeg.exe');

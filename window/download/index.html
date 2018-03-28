@@ -1,0 +1,31 @@
+<!doctype html>
+
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'/>
+    <title>Download</title>
+    <script src='script.js'></script>
+  </head>
+  <body>
+    <input id='search-query' type='text'/>
+    <button id='download' onclick='download()'>Download As</button>
+    <select id='format'>
+      <optgroup label='Video'>
+        <option>mp4</option>
+        <option>flv</option>
+        <option>avi</option>
+        <option>3gp</option>
+        <option>webm</option>
+        <option>mov</option>
+      </optgroup>
+      <optgroup label='Audio'>
+        <option>mp3</option>
+        <option>m4a</option>
+        <option>wav</option>
+        <option>ogg</option>
+      </optgroup>
+    </select>
+    <input id='file-path' type='text'/>
+    <button id='select-file' onclick='openFilePrompt()'>Select...</button>
+  </body>
+</html>

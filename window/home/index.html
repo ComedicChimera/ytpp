@@ -1,0 +1,45 @@
+<!doctype html>
+
+<html lang='en'>
+  <head>
+    <meta charset='utf-8'/>
+    <title>yt++</title>
+    <script src='../../scripts/player.js'></script>
+    <script src='script.js'></script>
+  </head>
+  <body>
+    <div class='search-bar'>
+      <input id='query' type='text'/>
+      <button id='search'>Search</button>
+      <button id='start-stream'>Play</button>
+      <button id='download'>Download</button>
+      <div id='search-results'>
+
+      </div>
+    </div>
+    <div class='song-queue'>
+      <span id='queue-title'>My Playlist</span>
+      <div class='queue-settings'>
+        <input type='checkbox' id='loop-queue'/>
+        <input type='checkbox' id='shuffle-queue'/>
+        <input type='checkbox' id='clear-queue'/>
+      </div>
+      <ol id='song-queue-internal'>
+
+      </ol>
+    </div>
+    <div class='player-interface'>
+      <audio id='player' controls></audio>
+      <div class='more-controls'>
+        <button id='stop'>Stop</button>
+        <div class='volume-control'>
+          <input id='volume-input' type='range' min='0' max='100' onchange='updateVolume();'/>
+          <img src='../../images/volume-medium.png' height='20px' width='20px'>
+        </div>
+        <select id='output-device'>
+          <!-- populate at runtime -->
+        </select>
+      </div>
+    </div>
+  </body>
+</html>

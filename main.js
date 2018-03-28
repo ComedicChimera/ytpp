@@ -15,7 +15,7 @@ function createWindow() {
 
   // load index.html
   win.loadURL(url.format({
-    pathname: path.join(__dirname, 'window/index.html'),
+    pathname: path.join(__dirname, 'window/home/index.html'),
     protocol: 'file:',
     slashes: true
   }));
@@ -45,10 +45,4 @@ app.on('activate', () => {
     createWindow();
 });
 
-// sets the remote page status (status message and progress bar)
-module.exports.setRemoteStatus = (message, progress) => {
-  win.webContents.send('set-status', {
-    message: message,
-    progress: progress
-  });
-}
+module.exports.win = win;
